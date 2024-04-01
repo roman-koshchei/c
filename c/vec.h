@@ -25,14 +25,18 @@
 #include "assert.h"
 #include "stdlib.h"
 
+#define CONCAT(a, b) a##b
+
 #define VEC_GROW_SIZE 4;
 
-#define VEC(type) \
-    struct type##Vec { \
+#define VEC(type) CONCAT(type, Vec)
+
+#define DEFINE_VEC(type) \
+    typedef struct type##Vec { \
         type* data; \
         size_t size; \
         size_t capacity; \
-    }
+    } type##Vec; \
 
 #define VEC_NEW(type, capacity) (struct type##Vec) { (type*) malloc(capacity * sizeof(type)), 0, capacity };
 
