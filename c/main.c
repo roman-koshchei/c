@@ -1,6 +1,6 @@
 #include "stdio.h"
 #include "vec.h"
-#include "linked_list.h"
+#include "queue.h"
 #include "stack/point_stack.h"
 #include "stack/stack.h"
 
@@ -10,8 +10,9 @@ typedef struct {
     int x;
 } Example;
 
-DEFINE_STACK(Example);
-DEFINE_VEC(Example);
+STACK_DEFINE_FOR(Example);
+VEC_DEFINE_FOR(Example);
+QUEUE_DEFINE_FOR(Example);
 
 void print_example(Example value) {
     printf("example x=%d\n", value.x);

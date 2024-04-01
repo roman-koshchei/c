@@ -31,7 +31,7 @@
 
 #define VEC(type) CONCAT(type, Vec)
 
-#define DEFINE_VEC(type) \
+#define VEC_DEFINE_FOR(type) \
     typedef struct type##Vec { \
         type* data; \
         size_t size; \

@@ -9,7 +9,7 @@
 
 #define STACK_NODE(type) struct type##StackNode \
 
-#define DEFINE_STACK(type) \
+#define STACK_DEFINE_FOR(type) \
     typedef struct type##StackNode type##StackNode; \
     struct type##StackNode { \
         type##StackNode* next; \
@@ -20,18 +20,18 @@
         type##StackNode* head; \
     } type##Stack; \
     bool type##_stack_pop(struct type##Stack* stack, type* value) { \
-            if (stack->head == NULL) { \
-                return false; \
-            } \
-            \
-            *value = stack->head->value; \
-            \
-            type##StackNode* next = stack->head->next; \
-            free(stack->head); \
-            stack->head = next; \
-            \
-            return true; \
-        }; \
+        if (stack->head == NULL) { \
+            return false; \
+        } \
+        \
+        *value = stack->head->value; \
+        \
+        type##StackNode* next = stack->head->next; \
+        free(stack->head); \
+        stack->head = next; \
+        \
+        return true; \
+    }; \
 
 #define STACK_NEW(type) (struct type##Stack) { NULL }
 
@@ -57,6 +57,6 @@
         (stack).head = node; \
     } while (0) \
 
-#define STACK_POP(type, stack, result) (type##_stack_pop(stack, result))
+#define STACK_POP(type, stack_ptr, result_ptr) (type##_stack_pop(stack_ptr, result_ptr))
 
 #endif

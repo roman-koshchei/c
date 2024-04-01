@@ -130,9 +130,9 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="linked_list.h" />
-    <ClInclude Include="point_stack.h" />
-    <ClInclude Include="stack.h" />
+    <ClInclude Include="queue.h" />
+    <ClInclude Include="stack\point_stack.h" />
+    <ClInclude Include="stack\stack.h" />
     <ClInclude Include="vec.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
