@@ -48,6 +48,8 @@
         } \
     } while (0) \
 
+// TODO: rename variables in macro in very unique way to avoid errors with actual code
+
 #define STACK_PUSH(type, stack, item) \
     do { \
         type##StackNode* node = (type##StackNode*) malloc(sizeof(type##StackNode)); \
@@ -58,5 +60,7 @@
     } while (0) \
 
 #define STACK_POP(type, stack_ptr, result_ptr) (type##_stack_pop(stack_ptr, result_ptr))
+
+#define STACK_IS_EMPTY(stack) ((stack).head == NULL)
 
 #endif

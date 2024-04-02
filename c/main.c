@@ -3,6 +3,7 @@
 #include "queue.h"
 #include "stack/point_stack.h"
 #include "stack/stack.h"
+#include "tree/int_tree.h"
 
 // Present examples for all data structures
 
@@ -13,6 +14,13 @@ typedef struct {
 STACK_DEFINE_FOR(Example);
 VEC_DEFINE_FOR(Example);
 QUEUE_DEFINE_FOR(Example);
+
+//#define TRY(type, var, action) \
+//    OptionalInt var##_optional = action; \
+//    if(var##_optional.present == false) { \
+//        return 0; \
+//    } \
+//    type var = var##_optional.value; \
 
 void print_example(Example value) {
     printf("example x=%d\n", value.x);
@@ -78,11 +86,24 @@ void vec_example() {
 }
 
 int main() {
-    stack_example();
+    /*  stack_example();
 
-    printf("\n");
+      printf("\n");
 
-    vec_example();
+      vec_example();
+
+      printf("\n");*/
+
+    int_tree_example();
+
+    //int res = calculate_number(10).value;
+
+    //TRY(int, num, calculate_number(-10));
+
+    //OptionalInt full = calculate_number(-10);
+    //if (full.present == false) {
+    //    return 0;
+    //}
 
     return 0;
 }
