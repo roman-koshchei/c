@@ -1,5 +1,7 @@
 # c
 
-Pure C implementations and playing arounds
+Pure C implementations and playing around
 
-https://dev.to/totally_chase/implementing-functional-type-safe-polymorphism-in-c-10b9
+Links:
+
+- https://dev.to/totally_chase/implementing-functional-type-safe-polymorphism-in-c-10b9
