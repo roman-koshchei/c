@@ -4,6 +4,7 @@
 #include "stack/point_stack.h"
 #include "stack/stack.h"
 #include "tree/int_tree.h"
+#include "tree/red_black_tree.h"
 
 // Present examples for all data structures
 
@@ -94,7 +95,8 @@ int main() {
 
       printf("\n");*/
 
-    int_tree_example();
+      //int_tree_example();
+    red_black_tree_example();
 
     //int res = calculate_number(10).value;
 

@@ -33,6 +33,15 @@
         } \
         return true; \
     } \
+    int type##_queue_count(type##Queue queue) { \
+        int count = 0; \
+        type##QueueNode* current = queue.start; \
+        while(current != NULL) { \
+            count += 1; \
+            current = current->next; \
+        } \
+        return count; \
+    } \
 
 #define QUEUE_NEW(type) (struct type##Queue) { NULL, NULL }; \
 
@@ -51,15 +60,22 @@
     do { \
         if((queue).start == NULL) { \
             (queue).start = (type##QueueNode*) malloc(sizeof(type##QueueNode)); \
+            (queue).start->value = item; \
+            (queue).start->next = NULL; \
             (queue).end = (queue).start; \
         } \
         else { \
-            type##QueueNode node = (type##QueueNode*) malloc(sizeof(type##QueueNode)); \
+            type##QueueNode* node = (type##QueueNode*) malloc(sizeof(type##QueueNode)); \
+            node->value = item; \
             (queue).end->next = node; \
             (queue).end = node; \
         } \
     } while (0) \
 
 #define QUEUE_DEQUEUE(type, queue_ptr, result_ptr) type##_queue_dequeue(queue_ptr, result_ptr)
+
+#define QUEUE_IS_EMPTY(queue) ((queue).start == NULL)
+
+#define QUEUE_COUNT(type, queue) type##_queue_count(queue)
 
 #endif
