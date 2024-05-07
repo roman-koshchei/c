@@ -50,58 +50,55 @@ void _red_black_node_free_including_children(RedBlackNode* node) {
     free(node);
 }
 
-void red_black_tree_free(RedBlackTree* tree) {}
+void red_black_tree_free(RedBlackTree* tree) {
+    _red_black_node_free_including_children(tree->root);
+    tree->root = NULL;
+}
 
 void _red_black_tree_left_rotate(RedBlackTree* tree, RedBlackNode* x) {
     RedBlackNode* y = x->right;
 
-    x->right = y->left;
-    if (y->left != NULL) {
-        y->left->parent = x;
-    }
-
     y->parent = x->parent;
-    if (x->parent == NULL) {
+    x->parent = y;
+    if (y->parent == NULL) {
         tree->root = y;
     }
-    else if (x == x->parent->left) {
-        x->parent->left = y;
+    else if (y->parent->right == x) {
+        y->parent->right = y;
     }
     else {
-        x->parent->right = y;
+        y->parent->left = y;
     }
-
+    x->right = y->left;
+    if (x->right != NULL) {
+        x->right->parent = x;
+    }
     y->left = x;
-    x->parent = y;
 }
 
-void _red_black_tree_right_rotate(RedBlackTree* tree, RedBlackNode* y) {
-    RedBlackNode* x = y->left;
-
-    y->left = x->right;
-
-    if (x->right != NULL) {
-        x->right->parent = y;
-    }
-
-    x->parent = y->parent;
-
+void _red_black_tree_right_rotate(RedBlackTree* tree, RedBlackNode* x) {
+    RedBlackNode* y = x->left;
+    y->parent = x->parent;
+    x->parent = y;
     if (y->parent == NULL) {
-        tree->root = x;
+        tree->root = y;
     }
-    else if (y == y->parent->left) {
-        y->parent->left = x;
+    else if (y->parent->right == x) {
+        y->parent->right = y;
     }
     else {
-        y->parent->right = x;
+        y->parent->left = y;
     }
 
-    x->right = y;
-    y->parent = x;
+    x->left = y->right;
+    if (x->left != NULL) {
+        x->left->parent = x;
+    }
+    y->right = x;
 }
 
 void _red_black_tree_fix_insert(RedBlackTree* tree, RedBlackNode* node) {
-    while (node != tree->root && node->parent->is_black == false) {
+    while (node->parent != NULL && node->parent->is_black == false) {
         RedBlackNode* parent = node->parent;
         RedBlackNode* grand_parent = node->parent->parent;
 
@@ -109,23 +106,20 @@ void _red_black_tree_fix_insert(RedBlackTree* tree, RedBlackNode* node) {
             RedBlackNode* uncle = grand_parent->right;
 
             if (uncle != NULL && uncle->is_black == false) {
+                grand_parent->is_black = false;
                 parent->is_black = true;
                 uncle->is_black = true;
-                grand_parent->is_black = false;
                 node = grand_parent;
             }
             else {
                 if (node == parent->right) {
-                    _red_black_tree_left_rotate(tree, parent);
                     node = parent;
-                    parent = node->parent;
+                    _red_black_tree_left_rotate(tree, node);
                 }
 
-                _red_black_tree_right_rotate(tree, grand_parent);
-                bool parent_is_black = parent->is_black;
-                parent->is_black = grand_parent->is_black;
-                grand_parent->is_black = parent_is_black;
-                node = parent;
+                node->parent->is_black = true;
+                node->parent->parent->is_black = false;
+                _red_black_tree_right_rotate(tree, node->parent->parent);
             }
         }
         else {
@@ -139,22 +133,25 @@ void _red_black_tree_fix_insert(RedBlackTree* tree, RedBlackNode* node) {
             }
             else {
                 if (node == parent->left) {
-                    _red_black_tree_right_rotate(tree, parent);
                     node = parent;
-                    parent = node->parent;
+                    _red_black_tree_right_rotate(tree, node);
                 }
 
-                _red_black_tree_left_rotate(tree, grand_parent);
-                bool parent_is_black = parent->is_black;
-                parent->is_black = grand_parent->is_black;
-                grand_parent->is_black = parent_is_black;
-                node = parent;
+                node->parent->is_black = true;
+                node->parent->parent->is_black = false;
+                _red_black_tree_left_rotate(tree, node->parent->parent);
             }
         }
     }
+    tree->root->is_black = true;
 }
 
 bool red_black_tree_insert(RedBlackTree* tree, int key) {
+    if (tree->root == NULL) {
+        tree->root = _red_black_node_new(key, true, NULL);
+        return;
+    }
+
     RedBlackNode* parent = NULL;
     RedBlackNode* current = tree->root;
     while (current != NULL) {
@@ -171,10 +168,7 @@ bool red_black_tree_insert(RedBlackTree* tree, int key) {
     }
 
     RedBlackNode* node = _red_black_node_new(key, false, parent);
-    if (parent == NULL) {
-        tree->root = node;
-    }
-    else if (key < parent->key) {
+    if (key < parent->key) {
         parent->left = node;
     }
     else {
@@ -182,22 +176,45 @@ bool red_black_tree_insert(RedBlackTree* tree, int key) {
     }
 
     _red_black_tree_fix_insert(tree, node);
-    tree->root->is_black = true;
 
     return true;
 }
 
-void _red_black_tree_transplant(RedBlackTree* tree, RedBlackNode* a, RedBlackNode* b) {
-    if (a->parent == NULL) {
-        tree->root = b;
+void _red_black_tree_transplant(RedBlackTree* tree, RedBlackNode* u, RedBlackNode* v) {
+    if (u->parent == NULL) {
+        tree->root = v;
     }
-    else if (a == a->parent->left) {
-        a->parent->left = b;
+    else if (u == u->parent->left) {
+        u->parent->left = v;
     }
     else {
-        a->parent->right = b;
+        u->parent->right = v;
     }
-    b->parent = a->parent;
+    v->parent = u->parent;
+}
+
+RedBlackNode* _red_black_tree_find_node(const RedBlackTree* tree, int key) {
+    RedBlackNode* current = tree->root;
+    while (current != NULL) {
+        if (key == current->key) {
+            return current;
+        }
+        else if (key < current->key) {
+            current = current->left;
+        }
+        else {
+            current = current->right;
+        }
+    }
+    return NULL;
+}
+
+RedBlackNode* _red_black_tree_find_min_node(RedBlackNode* node) {
+    /*while (node->left != NULL) {
+        node = node->left;
+    }*/
+    if (node->left == NULL) return node;
+    return node->left;
 }
 
 void _red_black_tree_fix_delete(RedBlackTree* tree, RedBlackNode* node) {
@@ -261,35 +278,12 @@ void _red_black_tree_fix_delete(RedBlackTree* tree, RedBlackNode* node) {
     node->is_black = true;
 }
 
-RedBlackNode* _red_black_tree_find_node(const RedBlackTree* tree, int key) {
-    RedBlackNode* current = tree->root;
-    while (current != NULL) {
-        if (key == current->key) {
-            return current;
-        }
-        else if (key < current->key) {
-            current = current->left;
-        }
-        else {
-            current = current->right;
-        }
-    }
-    return NULL;
-}
-
-RedBlackNode* _red_black_tree_find_min_node(RedBlackNode* node) {
-    while (node->left != NULL) {
-        node = node->left;
-    }
-    return node;
-}
-
 void red_black_tree_delete(RedBlackTree* tree, int key) {
     RedBlackNode* z = _red_black_tree_find_node(tree, key);
     if (z == NULL) return;
 
     RedBlackNode* y = z;
-    bool original_is_black = y->is_black;
+    bool y_original_is_black = y->is_black;
     RedBlackNode* x = NULL;
 
     if (z->left == NULL) {
@@ -302,11 +296,14 @@ void red_black_tree_delete(RedBlackTree* tree, int key) {
     }
     else {
         y = _red_black_tree_find_min_node(z->right);
-        original_is_black = y->is_black;
+        y_original_is_black = y->is_black;
+
         x = y->right;
 
         if (y->parent == z) {
-            x->parent = y;
+            if (x != NULL) {
+                x->parent = y;
+            }
         }
         else {
             _red_black_tree_transplant(tree, y, x);
@@ -321,7 +318,7 @@ void red_black_tree_delete(RedBlackTree* tree, int key) {
         y->is_black = z->is_black;
     }
 
-    if (original_is_black == true) {
+    if (y_original_is_black == true) {
         _red_black_tree_fix_delete(tree, x);
     }
 }
@@ -362,7 +359,7 @@ void red_black_tree_example() {
 
     printf("\n-------------------------------------\n");
 
-    red_black_tree_delete(&tree, 7);
+    red_black_tree_delete(&tree, 18);
 
     red_black_tree_print(tree.root, 0);
 
