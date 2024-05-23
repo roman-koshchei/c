@@ -237,7 +237,7 @@ void BiList::sort() {
             }
         }
         if (min != i) {
-            swap(i, min);
+            this->swap(i, min);
             // Swap will invalidate the iterator 'i', so we need to reset it
             i = min;
         }
