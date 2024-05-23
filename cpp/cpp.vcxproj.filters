@@ -30,6 +30,12 @@
     <ClCompile Include="queue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="bi_node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bi_list.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="node.h">
@@ -42,6 +48,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="queue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bi_node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bi_list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
