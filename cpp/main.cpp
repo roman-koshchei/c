@@ -2,51 +2,38 @@
 //
 
 #include <iostream>
-#include "stack.h"
-#include "queue.h"
+#include "CircularStack.h"
+
+void printItem(std::optional<int> item) {
+    if (item.has_value()) {
+        std::cout << "value: " << item.value() << std::endl;
+    }
+    else {
+        std::cout << "no value" << std::endl;
+    }
+}
 
 int main() {
-    std::cout << "Hello World!\n";
+    std::cout << "Circular Stack" << std::endl;
 
-    Stack stack = Stack();
-    stack.push(3);
-    stack.push(5);
-    stack.push(6);
-    stack.push(6);
+    CircularStack<int, uint8_t> stack = CircularStack<int, uint8_t> (3);
+    stack.Push(3);
+    stack.Push(5);
+    stack.Push(6);
+    stack.Push(6);
+    stack.Push(3);
 
-    stack.view();
-
-    stack.pop();
-    stack.pop();
-
-    stack.view();
-
-    Queue queue = Queue();
-    queue.enqueue(4);
-    queue.enqueue(8);
-    queue.enqueue(7);
-
-    queue.view();
-
-    auto first = queue.first();
-    if (first.has_value()) {
-        std::cout << "Has value: " << first.get_value() << std::endl;
-    }
-    else {
-        std::cout << "No value" << std::endl;
+    for (int i = 0; i < 8; i += 1) {
+        auto item = stack.Pop();
+        printItem(item);
+        
+        if (i == 3) {
+            stack.Push(8);
+        }
     }
 
-    queue.dequeue();
-    queue.dequeue();
-    queue.dequeue();
-
-    queue.view();
-
-    first = queue.first();
-    if (first.has_value()) {
-        std::cout << "Has value: " << first.get_value() << std::endl;
-    }
-    else {
-        std::cout << "No value" << std::endl;
-    }
+    stack.Clear();
+    stack.Push(87);
+    auto item = stack.Pop();
+    printItem(item);
 }

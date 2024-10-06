@@ -56,5 +56,8 @@
     <ClInclude Include="bi_list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CircularStack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
